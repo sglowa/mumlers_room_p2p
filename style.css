@@ -1,0 +1,11 @@
+video{
+	position: absolute;
+	width:100%;
+}
+.theirVideo{
+
+}
+.myVideo{
+	filter:invert(1.0);
+	opacity: 0.5;
+}
