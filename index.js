@@ -16,7 +16,7 @@ navigator.getUserMedia({video:true,audio:true},(myStream)=>{
 	});
 
 	peer.on('signal', (data)=>{
-		document.getElementById('yourId').value = JSON.stringify(data);
+		document.getElementById('yourId').value = JSON.stringify(data);		
 	});
 
 	document.getElementById('connect').addEventListener('click', ()=>{
@@ -34,6 +34,7 @@ navigator.getUserMedia({video:true,audio:true},(myStream)=>{
 		document.getElementById('messages').textContent += data + '\n';
 	});	
 	peer.on('stream', (theirStream)=>{
+		console.log('got the stream');
 		const video1 = document.createElement('video');
 		video1.setAttribute('class', 'theirVideo');
 		document.body.appendChild(video1);
