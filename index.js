@@ -12,6 +12,18 @@ navigator.getUserMedia({video:true,audio:true},(myStream)=>{
 		// checks who initiated the session
 		initiator: location.hash === '#init',
 		trickle: false,
+		config: {
+		        iceServers: [
+		            {
+		                urls: " stun:relay.backups.cz"
+		            },
+		            {
+		                 urls: 'turn:relay.backups.cz',
+		                 username: 'webrtc',
+		                 credential: 'webrtc'		                 
+		            }
+		        ]
+		    },
 		stream: myStream
 	});
 
