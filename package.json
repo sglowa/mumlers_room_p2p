@@ -4,7 +4,7 @@
   "description": "a p2p video chat that brings you closer to the spirits of your distant friends and lovers",
   "main": "index.js",
   "scripts": {
-    "start": "budo index.js:bundle.js",
+    "start": "budo index.js:bundle.js --ssl",
     "dev": "nodemon ./index.js",
     "ui": "browser-sync start --proxy=localhost:8000 --files='**/*.css, **/*.pug, **/*.js' --ignore=node_modules --reload-delay 10 --no-ui --no-notify"
   },
