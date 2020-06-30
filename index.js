@@ -1,6 +1,11 @@
 /*jshint esversion:6*/
 
-navigator.webkitGetUserMedia({video:true,audio:true},(myStream)=>{
+navigator.getUserMedia = ( navigator.getUserMedia ||
+                       navigator.webkitGetUserMedia ||
+                       navigator.mozGetUserMedia ||
+                       navigator.msGetUserMedia);
+
+navigator.getUserMedia({video:true,audio:true},(myStream)=>{
 	const Peer = require('simple-peer');
 	const peer = new Peer({
 		// hmmm, not sure but #init is in the url,
@@ -32,7 +37,7 @@ navigator.webkitGetUserMedia({video:true,audio:true},(myStream)=>{
 		const video1 = document.createElement('video');
 		video1.setAttribute('class', 'theirVideo');
 		document.body.appendChild(video1);
-		// creates the url foe the stream, interesting
+
 		video1.srcObject = theirStream;
 		video1.play();
 		const video2 = document.createElement('video');
