@@ -1,5 +1,7 @@
 /*jshint esversion:6*/
 
+console.log(location.hash=='#init'?'hello initiator':'hello receiver');
+
 navigator.getUserMedia = ( navigator.getUserMedia ||
                        navigator.webkitGetUserMedia ||
                        navigator.mozGetUserMedia ||
@@ -25,7 +27,7 @@ navigator.getUserMedia({video:true,audio:true},(myStream)=>{
 		        ]
 		    },
 		stream: myStream
-	});
+	});	
 
 	peer.on('signal', (data)=>{
 		document.getElementById('yourId').value = JSON.stringify(data);		
