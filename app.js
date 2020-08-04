@@ -17,17 +17,11 @@ const credentials = {
 	ca: ca
 };
 
-// const port = process.env.PORT || 8080;
+const port = process.env.PORT || 8080;
 
 require('./routes')(app);
 
-// const httpsServer = httpolyglot.createServer(credentials,app);
-// httpsServer.listen(8080, ()=>{
-// 	console.log('listening on port 8080');
-// });
-
-const httpsServer = https.createServer(credentials, app);
-
-httpsServer.listen(443, () => {
-	console.log('HTTPS Server running on port 443');
+const httpsServer = httpolyglot.createServer(credentials,app);
+httpsServer.listen(8080, ()=>{
+	console.log('listening on port 8080');
 });
