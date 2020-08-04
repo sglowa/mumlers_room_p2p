@@ -8,8 +8,8 @@ const httpolyglot = require('httpolyglot')
 const app = express();
 
 const privateKey = fs.readFileSync('/etc/letsencrypt/live/justfornow.ml/privkey.pem', 'utf8');
-const certificate = readFileSync('/etc/letsencrypt/live/justfornow.ml/privkey.pem', 'utf8');
-const ca = readFileSync('/etc/letsencrypt/live/justfornow.ml/chain.pem', 'utf8');
+const certificate = fs.readFileSync('/etc/letsencrypt/live/justfornow.ml/privkey.pem', 'utf8');
+const ca = fs.readFileSync('/etc/letsencrypt/live/justfornow.ml/chain.pem', 'utf8');
 
 const credentials = {
 	key: privateKey,
