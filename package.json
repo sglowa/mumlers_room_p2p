@@ -4,6 +4,7 @@
   "description": "a p2p video chat that brings you closer to the spirits of your distant friends and lovers",
   "main": "index.js",
   "scripts": {
+    "start2": "browserify index.js -o ./public/bundle.js; node app",
     "start": "budo index.js:bundle.js --port 8080",
     "dev": "nodemon ./index.js",
     "ui": "browser-sync start --proxy=localhost:8000 --files='**/*.css, **/*.pug, **/*.js' --ignore=node_modules --reload-delay 10 --no-ui --no-notify"
@@ -17,7 +18,9 @@
     "nodemon": "^2.0.4"
   },
   "dependencies": {
+    "browserify": "^16.5.2",
     "getusermedia": "^2.0.1",
+    "httpolyglot": "^0.1.2",
     "simple-peer": "^9.7.2"
   }
 }
