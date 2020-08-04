@@ -13,8 +13,8 @@ const ca = fs.readFileSync('/etc/letsencrypt/live/justfornow.ml/chain.pem', 'utf
 
 const credentials = {
 	key: privateKey,
-	cert: certificate,
-	ca: ca
+	cert: certificate
+	// ca: ca
 };
 
 const port = process.env.PORT || 8080;
