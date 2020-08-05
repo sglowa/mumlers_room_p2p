@@ -13,8 +13,8 @@ navigator.getUserMedia({video:true,audio:true},(myStream)=>{
 		// hmmm, not sure but #init is in the url,
 		// checks who initiated the session
 		initiator: location.hash === '#init',
-		reconnectTimer: 100,
-      	iceTransportPolicy: 'relay',
+		reconnectTimer: 3000,
+      	// iceTransportPolicy: 'relay',
 		trickle: false,
 		config: {
 			iceServers: [
@@ -26,7 +26,7 @@ navigator.getUserMedia({video:true,audio:true},(myStream)=>{
 			// public turn server from https://gist.github.com/sagivo/3a4b2f2c7ac6e1b5267c2f1f59ac6c6b
 			// set your own servers here
 				{
-					"urls": "turn:numb.viagenie.ca?transport=tcp",
+					"urls": "turn:numb.viagenie.ca?transport=udp",
 					"username": "s9lowacki@gmail.com",
 					"credential": "testingtestint"
 				}
