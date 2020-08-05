@@ -67,6 +67,11 @@ navigator.getUserMedia({video:true,audio:true},(myStream)=>{
 		video2.srcObject = myStream;
 		video2.play();
 	});
+
+	peer.on('error', err=>{
+		console.log(`peer error: ${err}`);
+	});
+
 },(err)=>{
 	console.log(err);
 });
