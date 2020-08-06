@@ -89,7 +89,7 @@ navigator.getUserMedia({video:true,audio:false},myStream=>{
 				call.on('stream',bouncedStream=>{
 					getBouncedStream(bouncedStream);
 				})
-				cosole.log('fired 2nd call event');
+				console.log('fired 2nd call event');
 			})
 			peer.call(call.peer, yourStream);
 		})
