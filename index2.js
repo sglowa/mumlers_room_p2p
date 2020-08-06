@@ -12,6 +12,7 @@ navigator.getUserMedia = ( navigator.getUserMedia ||
                        navigator.msGetUserMedia);
 
 navigator.getUserMedia({video:true,audio:false},myStream=>{
+console.log('myStream L', myStream.id);
 
 // establishing connection (automatic, two peers)
 	// me connecting
@@ -87,9 +88,10 @@ navigator.getUserMedia({video:true,audio:false},myStream=>{
 				// what needs to be sent back is the composite
 				call.answer();
 				call.on('stream',bouncedStream=>{
-					getBouncedStream(bouncedStream);
+					getBouncedStream(bouncedStream.id);
+					console.log('fired 2nd call event', bouncedStream);
 				})
-				console.log('fired 2nd call event');
+				
 			})
 			peer.call(call.peer, yourStream);
 		})
