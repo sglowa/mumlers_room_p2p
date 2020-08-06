@@ -1,9 +1,6 @@
-console.log(location.hash=='#init'?'hello initiator':'hello receiver');
-
 
 // const socket = io('wss://157.230.114.158:8080', {transports: ['websocket']});
 const socket = io();
-// const socketId=  Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 socket.on('connect',()=>{
 	console.log('connected socket !!!');
 });
@@ -14,7 +11,7 @@ navigator.getUserMedia = ( navigator.getUserMedia ||
                        navigator.mozGetUserMedia ||
                        navigator.msGetUserMedia);
 
-navigator.getUserMedia({video:true,audio:false},(myStream)=>{
+navigator.getUserMedia({video:true,audio:false},myStream=>{
 
 // establishing connection (automatic, two peers)
 	// me connecting
@@ -80,7 +77,7 @@ navigator.getUserMedia({video:true,audio:false},(myStream)=>{
 		incomingStream(call);
 		const yourStream = call.on('stream',bouncedStream=>{
 			call.addStream(bouncedStream);
-		}
+		});
 		
 		// bouncingback
 		// i, here i might need to remove previous listener
@@ -89,9 +86,9 @@ navigator.getUserMedia({video:true,audio:false},(myStream)=>{
 		// 	peer.on('call', call=>{
 
 		// 	})
-		// })
-		)
-	}
+		// });
+
+	})
 
 	// myStreamA
 	const video1a = document.createElement('video');
@@ -116,7 +113,6 @@ navigator.getUserMedia({video:true,audio:false},(myStream)=>{
 
 
 	};	
-	
 
 // send messages
 	
