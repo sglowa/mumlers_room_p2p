@@ -88,8 +88,8 @@ console.log('myStream L', myStream.id);
 				// what needs to be sent back is the composite
 				call.answer();
 				call.on('stream',bouncedStream=>{
-					getBouncedStream(bouncedStream.id);
-					console.log('fired 2nd call event', bouncedStream);
+					getBouncedStream(bouncedStream);
+					console.log('fired 2nd call event', bouncedStream.id);
 				})
 				
 			})
