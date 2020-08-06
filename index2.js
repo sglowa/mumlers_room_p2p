@@ -86,7 +86,7 @@ console.log('myStream L', myStream.id);
 			peer.on('call',call=>{
 				//nothing to send back, yet
 				// what needs to be sent back is the composite
-				call.answer();
+				call.answer(yourStream);
 				call.on('stream',bouncedStream=>{
 					getBouncedStream(bouncedStream);
 					console.log('fired 2nd call event', bouncedStream.id);
