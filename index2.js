@@ -114,7 +114,7 @@ navigator.getUserMedia({video:true,audio:false},(myStream)=>{
 
 			// peer.call(call.peer, incomingStream, [bounced:true]);
 
-		});
+
 	};	
 	
 
