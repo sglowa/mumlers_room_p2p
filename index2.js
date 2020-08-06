@@ -72,6 +72,7 @@ navigator.getUserMedia({video:true,audio:false},myStream=>{
 
 	// call listener
 	peer.on('call', call=>{
+		console.log('fired 1st call event');
 		initCall(call);
 	})	
 
@@ -88,7 +89,7 @@ navigator.getUserMedia({video:true,audio:false},myStream=>{
 
 			peer.off('call');
 			peer.on('call',call=>{
-				console.log('fired a new call event');
+				console.log('fired 2nd call event');
 			})
 			peer.call(call.peer, yourStream);
 
