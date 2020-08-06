@@ -86,7 +86,7 @@ console.log('myStream L', myStream.id);
 			peer.on('call',call=>{
 				//nothing to send back, yet
 				// what needs to be sent back is the composite
-				call.off('steam');
+				call.off('stream');
 				
 				call.on('stream',bouncedStream=>{
 					getBouncedStream(bouncedStream);
