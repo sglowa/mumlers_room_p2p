@@ -51,8 +51,8 @@ navigator.getUserMedia({video:true,audio:false},(myStream)=>{
 
 		sendMsgEvent(conn);
 
-		const call = peer.call(conn.peer, myStream, {bounced:false});
-		incomingStream(call);
+		const call = peer.call(conn.peer, myStream);
+		// incomingStream(call);
 	});
 
 	const helloPeer = (conn,who) => {
@@ -74,12 +74,22 @@ navigator.getUserMedia({video:true,audio:false},(myStream)=>{
 // exchanging streams 
 
 	// call listener
-	peer.on('call', call=>{		
-		call.answer(myStream);
+	peer.on('call', call=>{	
+
+		call.answer();
+
+
+
+		// call.answer(myStream);
 		incomingStream(call);
+		
 		// bouncingback
+		// i, here i might need to remove previous listener
 		// call.on('stream',bouncedStream=>{
-		// 	peer.call()
+		// 	peer.call(call.peer,bouncedStream);
+		// 	peer.on('call', call=>{
+
+		// 	})
 		// })
 	})
 
