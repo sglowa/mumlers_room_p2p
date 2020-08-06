@@ -1,6 +1,6 @@
 console.log(location.hash=='#init'?'hello initiator':'hello receiver');
 
-const socket = io('https://157.230.114.158:8080', {secure: true});
+const socket = io('https://157.230.114.158', {secure: true});
 // const socketId=  Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 socket.on('connect',()=>{
 	console.log('connected socket !!!');
