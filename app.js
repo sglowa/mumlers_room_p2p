@@ -2,6 +2,8 @@ const fs = require('fs');
 const express = require('express');
 const httpolyglot = require('httpolyglot');
 let io = require('socket.io');
+//ech just checking instead og polyglot 
+const https = require('https');
 
 // localtesting  
 // const http = require('http');
@@ -26,7 +28,7 @@ const port = process.env.PORT || 8080;
 require('./routes')(app);
  
  // 4 remote server
-const httpsServer = httpolyglot.createServer(credentials,app);
+const httpsServer = https.createServer(credentials,app);
 httpsServer.listen(port, ()=>{
 	console.log('listening on port 8080');
 });
