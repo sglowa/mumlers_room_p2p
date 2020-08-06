@@ -79,7 +79,7 @@ navigator.getUserMedia({video:true,audio:false},(myStream)=>{
 		call.answer();
 		incomingStream(call);
 		const yourStream = call.on('stream',bouncedStream=>{
-			call.addStream(bouncedStream);
+			// call.addStream(bouncedStream);
 		}
 		
 		// bouncingback
