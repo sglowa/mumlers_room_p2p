@@ -51,18 +51,9 @@ navigator.getUserMedia({video:true,audio:false},(myStream)=>{
 
 		sendMsgEvent(conn);
 
-		const call = peer.call(conn.peer, myStream);
+		const call = peer.call(conn.peer, myStream, [bounced:false]);
 		incomingStream(call);
 	});
-
-	peer.on('call', call=>{
-		call.answer(myStream);
-		incomingStream(call);
-		// bouncingback
-		// call.on('stream',bouncedStream=>{
-		// 	peer.call()
-		// })
-	})
 
 	const helloPeer = (conn,who) => {
 		conn.on('open', function() {
@@ -82,6 +73,16 @@ navigator.getUserMedia({video:true,audio:false},(myStream)=>{
 
 // exchanging streams 
 
+	// call listener
+	peer.on('call', call=>{		
+		call.answer(myStream);
+		incomingStream(call);
+		// bouncingback
+		// call.on('stream',bouncedStream=>{
+		// 	peer.call()
+		// })
+	})
+
 	// myStreamA
 	const video1a = document.createElement('video');
 	video1a.setAttribute('class', 'myVideo');
@@ -91,13 +92,17 @@ navigator.getUserMedia({video:true,audio:false},(myStream)=>{
 	// myStreamB will be bounced on connection
 
 	const incomingStream = call =>{
+		console.log(call);
 		call.on('stream', incomingStream =>{
 			const video2a = document.createElement('video');
 			video2a.setAttribute('class', 'theirVideo');
 			document.body.appendChild(video2a);
 			video2a.srcObject = incomingStream;
 			video2a.play();
-			console.log(call);
+
+
+			// peer.call(call.peer, incomingStream, [bounced:true]);
+
 		});
 	};	
 	
