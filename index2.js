@@ -71,30 +71,29 @@ navigator.getUserMedia({video:true,audio:false},myStream=>{
 // exchanging streams 
 
 	// call listener
-	peer.on('call', call=>{	
+	peer.on('call', call=>{
+		initCall(call);
+	})	
 
+		// call.answer(myStream);		
+		// call.on('stream',yourStream=>{
+		// 	peer.call(call.peer, yourStream);
+		// 	console.log("my Stream ID", myStream.id);
+		// 	console.log("received Stream ID", yourStream.id);
+		// })
+	// })
+	const initCall = (call)=>{
 		call.answer(myStream);
-		
-		call.on('stream',yourStream=>{
+		call.on('stream', yourStream=>{
+
+			peer.off('call');
+			peer.on('call',call=>{
+				console.log('fired a new call event');
+			})
 			peer.call(call.peer, yourStream);
-			console.log("my Stream ID", myStream.id);
-			console.log("received Stream ID", yourStream.id);
+
 		})
-
-
-		// incomingStream(call);
-
-		
-		// bouncingback
-		// i, here i might need to remove previous listener
-		// call.on('stream',bouncedStream=>{
-		// 	peer.call(call.peer,bouncedStream);
-		// 	peer.on('call', call=>{
-
-		// 	})
-		// });
-
-	})
+	}
 
 	// myStreamA
 	const video1a = document.createElement('video');
