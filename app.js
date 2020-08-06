@@ -40,7 +40,7 @@ httpsServer.listen(port, ()=>{
 // ~~~~~~~~~~~~~~~~~~
 
 // io ~~~~~ passing peerID around (its just gonan be faster)
-io = io(httpServer);
+io = io(httpsServer);
 io.on('connection', socket => {
 	console.log("socket connected:");
 

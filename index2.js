@@ -1,6 +1,6 @@
 console.log(location.hash=='#init'?'hello initiator':'hello receiver');
 
-const socket = io('http://localhost:8080');
+const socket = io('https://localhost:443');
 // const socketId=  Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 socket.on('connect',()=>{
 	console.log('connected socket !!!');
