@@ -18,7 +18,15 @@ navigator.getUserMedia({video:true,audio:false},(myStream)=>{
 
 // establishing connection (automatic, two peers)
 	// me connecting
-	const peer = new Peer();
+	const peer = new Peer({
+		config: {'iceServers': [
+		   { url: 'stun:stun.l.google.com:19302' },
+		   { url: 'turn:numb.viagenie.ca?transport=udp',
+		   	username: 's9lowacki@gmail.com',
+		    credential: 'testingtestint'
+		    }
+		 ]}
+	});
 	peer.on('open',  id =>{
 		console.log('My peer Id is: ' + id);
 		sendPeerId(id);
