@@ -51,7 +51,7 @@ navigator.getUserMedia({video:true,audio:false},(myStream)=>{
 
 		sendMsgEvent(conn);
 
-		const call = peer.call(conn.peer, myStream, [bounced:false]);
+		const call = peer.call(conn.peer, myStream, {bounced:false});
 		incomingStream(call);
 	});
 
