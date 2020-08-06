@@ -1,6 +1,7 @@
 console.log(location.hash=='#init'?'hello initiator':'hello receiver');
 
-const socket = io('https://157.230.114.158', {secure: true});
+
+const socket = io('ws://157.230.114.158:3000', {transports: ['websocket']});
 // const socketId=  Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 socket.on('connect',()=>{
 	console.log('connected socket !!!');
