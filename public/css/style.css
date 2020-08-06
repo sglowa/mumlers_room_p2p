@@ -4,7 +4,7 @@ video{
 	top:0px;
 	z-index: -999;
 }
-.theirVideo{
+.bouncedVideo{
 	z-index: -1000;
 }
 .myVideo{

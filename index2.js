@@ -70,30 +70,37 @@ navigator.getUserMedia({video:true,audio:false},myStream=>{
 
 // exchanging streams 
 
-	// call listener
+	// call listener - peers sending their own streams
 	peer.on('call', call=>{
 		console.log('fired 1st call event');
-		initCall(call);
+		bounceStreamBack(call);
 	})	
 
-		// call.answer(myStream);		
-		// call.on('stream',yourStream=>{
-		// 	peer.call(call.peer, yourStream);
-		// 	console.log("my Stream ID", myStream.id);
-		// 	console.log("received Stream ID", yourStream.id);
-		// })
-	// })
-	const initCall = (call)=>{
+	const bounceStreamBack = (call)=>{
 		call.answer(myStream);
+		// here im sending yourStream back to you
 		call.on('stream', yourStream=>{
 
 			peer.off('call');
 			peer.on('call',call=>{
-				console.log('fired 2nd call event');
+				//nothing to send back, yet
+				// what needs to be sent back is the composite
+				call.answer();
+				call.on('stream',bouncedStream=>{
+					getBouncedStream(bouncedStream);
+				})
+				cosole.log('fired 2nd call event');
 			})
 			peer.call(call.peer, yourStream);
-
 		})
+
+		const getBouncedStream = stream => {
+			const video1b = document.createElement('video');
+			video1b.setAttribute('class', 'bouncedVideo');
+			document.body.appendChild(video1b);
+			video1b.srcObject = stream;
+			video1b.play();
+		}
 	}
 
 	// myStreamA
