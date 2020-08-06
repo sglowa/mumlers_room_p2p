@@ -74,9 +74,10 @@ navigator.getUserMedia({video:true,audio:false},myStream=>{
 	peer.on('call', call=>{	
 
 		call.answer();
-		incomingStream(call);
+		// incomingStream(call);
 		const yourStream = call.on('stream',bouncedStream=>{
 			call.addStream(bouncedStream);
+			console.log(call)
 		});
 		
 		// bouncingback
