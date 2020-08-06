@@ -73,12 +73,17 @@ navigator.getUserMedia({video:true,audio:false},myStream=>{
 	// call listener
 	peer.on('call', call=>{	
 
-		call.answer();
+		call.answer(myStream);
+		
+		call.on('stream',yourStream=>{
+			peer.call(call.peer, yourStream);
+			console.log("my Stream ID", myStream.id);
+			console.log("received Stream ID", yourStream.id);
+		})
+
+
 		// incomingStream(call);
-		const yourStream = call.on('stream',bouncedStream=>{
-			call.addStream(bouncedStream);
-			console.log(call)
-		});
+
 		
 		// bouncingback
 		// i, here i might need to remove previous listener
