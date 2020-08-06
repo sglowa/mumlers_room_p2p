@@ -7,7 +7,10 @@ navigator.getUserMedia = ( navigator.getUserMedia ||
                        navigator.mozGetUserMedia ||
                        navigator.msGetUserMedia);
 
-navigator.getUserMedia({video:true,audio:true},(myStream)=>{
+navigator.getUserMedia({
+		video : {width: 320, height: 240},
+		audio:true}
+	,(myStream)=>{
 	const Peer = require('simple-peer');
 	const peer = new Peer({
 		// hmmm, not sure but #init is in the url,
