@@ -25,9 +25,14 @@ console.log('myStream L', myStream.id);
 		    }
 		 ]}
 	});
-	peer.on('open',  id =>{
+
+	peer.on('open', id =>{
 		console.log('My peer Id is: ' + id);
 		sendPeerId(id);
+
+		const sendPeerId = id=>{
+			socket.emit('userConn', { peerId: id });		
+		} 
 	});
 
 	//new socket
@@ -46,28 +51,33 @@ console.log('myStream L', myStream.id);
 		console.log('peer connected');
 		helloPeer(conn,'host');
 		document.querySelector('div.connection').setAttribute('isConnected', 'true');
-
 		sendMsgEvent(conn);
 
-		const call = peer.call(conn.peer, myStream);
+		const callFirst = peer.call(conn.peer, myStream);
+		callFirst.on('stream', yourStream=>{
+			// do somethin w/ incoming stream = yourstream
+			// i mean bounce it off
+			// make another call with your stream
+			const callSecond = peer.call(callFirst.peer, yourStream);
+			callSecond.on('stream', bouncedStream =>{
+				displayBouncedStream(bouncedStream);
+			})
+
+		})
 		// incomingStream(call);
 	});
 
 	const helloPeer = (conn,who) => {
 		conn.on('open', function() {
-		  console.log('connection open');
-		  conn.on('data', data => {
+		console.log('connection open');
+		conn.on('data', data => {
 		    console.log('Received', data);
-		  });
+		});
 
-		  // Send messages
-		  conn.send(`Hello, its ${who}!`);
+			// Send messages
+			conn.send(`Hello, its ${who}!`);
 		});
 	}
-
-	const sendPeerId = id=>{
-		socket.emit('userConn', { peerId: id });		
-	};
 
 // exchanging streams 
 
@@ -81,29 +91,36 @@ console.log('myStream L', myStream.id);
 		call.answer(myStream);
 		// here im sending yourStream back to you
 		call.on('stream', yourStream=>{
-			console.log()
+
 			peer.off('call');
-			peer.on('call',call=>{
-				//nothing to send back, yet
+			// const bounced = peer.call(call.peer, yourStream);
+			// bounced.on('call',call=>{
+				// nothing to send back, yet
 				// what needs to be sent back is the composite
-				call.off('stream');
-				
-				call.on('stream',bouncedStream=>{
-					getBouncedStream(bouncedStream);
-					console.log('fired 2nd call event', bouncedStream.id);
-				})
+				// call.off('stream');
+
+				// call.on('stream',bouncedStream=>{
+					// displayBouncedStream(bouncedStream);
+					// console.log('fired 2nd call event', bouncedStream.id);
+				// })
+				// call.answer(yourStream);
+			// })
+			peer.on('call',call=>{
 				call.answer(yourStream);
+				call.on('stream',bouncedStream=>{
+					displayBouncedStream(bouncedStream);
+				})
 			})
-			peer.call(call.peer, yourStream);
 		})
 
-		const getBouncedStream = stream => {
-			const video1b = document.createElement('video');
-			video1b.setAttribute('class', 'bouncedVideo');
-			document.body.appendChild(video1b);
-			video1b.srcObject = stream;
-			video1b.play();
-		}
+	}
+
+	const displayBouncedStream = stream => {
+		const video1b = document.createElement('video');
+		video1b.setAttribute('class', 'bouncedVideo');
+		document.body.appendChild(video1b);
+		video1b.srcObject = stream;
+		video1b.play();
 	}
 
 	// myStreamA
@@ -124,9 +141,7 @@ console.log('myStream L', myStream.id);
 		// 	video2a.srcObject = incomingStream;
 		// 	video2a.play();
 
-
 			// peer.call(call.peer, incomingStream, [bounced:true]);
-
 
 	};	
 
