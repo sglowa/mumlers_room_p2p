@@ -28,11 +28,10 @@ console.log('myStream L', myStream.id);
 
 	peer.on('open', id =>{
 		console.log('My peer Id is: ' + id);
-		sendPeerId(id);
-
 		const sendPeerId = id=>{
 			socket.emit('userConn', { peerId: id });		
 		} 
+		sendPeerId(id);
 	});
 
 	//new socket
