@@ -1,10 +1,11 @@
 {
   "name": "mumlers_app_p2p",
   "version": "1.0.0",
-  "description": "a p2p video chat that brings you closer to the spirits of your distant friends and lovers",
+  "description": "a spirit infused p2p videochat savouring the distance and tech that collapses it",
   "main": "app.js",
   "scripts": {
     "start": "browserify index2.js -o ./public/bundle.js; node app",
+    "startlocal": "browserify index2.js -o ./public/bundle.js; node app_local",
     "startdev": "watchify index2.js -o ./public/bundle.js & node app"
   },
   "author": "psinka",
@@ -22,7 +23,7 @@
     "httpolyglot": "^0.1.2",
     "peer": "^0.5.3",
     "peerjs": "^1.3.1",
-    "simple-peer": "^9.7.2",
-    "socket.io": "^2.3.0"
+    "socket.io": "^2.3.0",
+    "videocontext": "^0.54.0"
   }
 }

@@ -3,11 +3,7 @@ const express = require('express');
 const httpolyglot = require('httpolyglot');
 let io = require('socket.io');
 //ech just checking instead og polyglot 
-const https = require('https');
-
-// localtesting  
-// const http = require('http');
-// ~~~~~~~~~~~~~~~~~~
+// const https = require('https');
 
 const app = express();
 
@@ -32,14 +28,6 @@ const httpsServer = httpolyglot.createServer(credentials,app);
 httpsServer.listen(port, ()=>{
 	console.log('listening on port 8080 !');
 });
-// ~~~~~~~~~~~~~~~~~~
-
-// localtesting  
-// const httpServer = http.createServer(app);
-// httpServer.listen(port, ()=>{
-// 	console.log('dev : listening on port 8080');
-// });
-// ~~~~~~~~~~~~~~~~~~
 
 // io ~~~~~ passing peerID around (its just gonan be faster)
 io = io(httpsServer);

@@ -1,17 +1,18 @@
-
-// const socket = io('wss://157.230.114.158:8080', {transports: ['websocket']});
+/*jshint esversion:6*/
 const socket = io();
 socket.on('connect',()=>{
 	console.log('connected socket !!!');
 });
-
 
 navigator.getUserMedia = ( navigator.getUserMedia ||
                        navigator.webkitGetUserMedia ||
                        navigator.mozGetUserMedia ||
                        navigator.msGetUserMedia);
 
-navigator.getUserMedia({video:true,audio:false},myStream=>{
+navigator.getUserMedia({video:{
+	width:{ideal:480},
+	height:{ideal:360}
+},audio:false},myStream=>{
 console.log('myStream L', myStream.id);
 
 // establishing connection (automatic, two peers)
@@ -34,36 +35,38 @@ console.log('myStream L', myStream.id);
 		sendPeerId(id);
 	});
 
-	//new socket
+	//on new socket
 	socket.on('userConn',data =>{
-		//connect to new peer		
+		//outgoing connection		
 		const conn = peer.connect(data.peerId);
 		console.log(`connected to peer: ${data.peerId}`);
 		helloPeer(conn,'new peer');		
 		document.querySelector('div.connection').setAttribute('isConnected', 'true');
-
-		sendMsgEvent(conn);
+		hookMsgEvent(conn);
 	});	
 
-	//someone connecting to me
+	//incoming connection
 	peer.on('connection', conn =>{
 		console.log('peer connected');
 		helloPeer(conn,'host');
 		document.querySelector('div.connection').setAttribute('isConnected', 'true');
-		sendMsgEvent(conn);
+		hookMsgEvent(conn);
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~automated call 
 
 		const callFirst = peer.call(conn.peer, myStream);
 		callFirst.on('stream', yourStream=>{
-			// do somethin w/ incoming stream = yourstream
-			// i mean bounce it off
-			// make another call with your stream
 			const callSecond = peer.call(callFirst.peer, yourStream);
 			callSecond.on('stream', bouncedStream =>{
-				displayBouncedStream(bouncedStream);
-			})
-
-		})
-		// incomingStream(call);
+				passStreams(myStream,bouncedStream,composite=>{
+					const callThird = peer.call(callFirst.peer, composite);
+					callThird.on('stream',compositeStream=>{
+						passStreamsAllPeers(composite,compositeStream);
+					});
+				});
+				
+			});
+		});
 	});
 
 	const helloPeer = (conn,who) => {
@@ -76,7 +79,7 @@ console.log('myStream L', myStream.id);
 			// Send messages
 			conn.send(`Hello, its ${who}!`);
 		});
-	}
+	};
 
 // exchanging streams 
 
@@ -84,7 +87,7 @@ console.log('myStream L', myStream.id);
 	peer.on('call', call=>{
 		console.log('fired 1st call event');
 		bounceStreamBack(call);
-	})	
+	});
 
 	const bounceStreamBack = (call)=>{
 		call.answer(myStream);
@@ -92,61 +95,58 @@ console.log('myStream L', myStream.id);
 		call.on('stream', yourStream=>{
 
 			peer.off('call');
-			// const bounced = peer.call(call.peer, yourStream);
-			// bounced.on('call',call=>{
-				// nothing to send back, yet
-				// what needs to be sent back is the composite
-				// call.off('stream');
-
-				// call.on('stream',bouncedStream=>{
-					// displayBouncedStream(bouncedStream);
-					// console.log('fired 2nd call event', bouncedStream.id);
-				// })
-				// call.answer(yourStream);
-			// })
 			peer.on('call',call=>{
 				call.answer(yourStream);
-				call.on('stream',bouncedStream=>{
-					displayBouncedStream(bouncedStream);
-				})
-			})
-		})
+				call.on('stream',bouncedStream=>{		
+					peer.off('call');
+					passStreams(myStream,bouncedStream,composite=>{
+						peer.on('call',call=>{
+							call.answer(composite);
+							call.on('stream',composite_incoming=>{
+								passStreamsAllPeers(composite,composite_incoming);
+							});
+						});
+					});					
+				});
+			});
+		});
+	};
 
-	}
+	const passStreams = (origin_str,bounced_str,callback)=>{
+		const videocontext_userComposite = require('./videocontext_userComposite.js');
+		videocontext_userComposite(origin_str,bounced_str,(canvas)=>{
+			callback(canvas.captureStream());
+		});			
+	};
 
-	const displayBouncedStream = stream => {
-		const video1b = document.createElement('video');
-		video1b.setAttribute('class', 'bouncedVideo');
-		document.body.appendChild(video1b);
-		video1b.srcObject = stream;
-		video1b.play();
-	}
+	const passStreamsAllPeers = (myComposite, yourComposite)=>{
+		const videocontext_allUsersComposite = require('./videocontext_allUsersComposite.js');
+		videocontext_allUsersComposite(myComposite, yourComposite,(canvas)=>{
+			document.body.appendChild(canvas);
+		});
+	};
 
-	// myStreamA
-	const video1a = document.createElement('video');
-	video1a.setAttribute('class', 'myVideo');
-	document.body.appendChild(video1a);
-	video1a.srcObject = myStream;
-	video1a.play();
-	// myStreamB will be bounced on connection
 
-	const incomingStream = call =>{
-		console.log(call);
-		// ~~~ not displaying the streamYet.
-		// call.on('stream', incomingStream =>{
-		// 	const video2a = document.createElement('video');
-		// 	video2a.setAttribute('class', 'theirVideo');
-		// 	document.body.appendChild(video2a);
-		// 	video2a.srcObject = incomingStream;
-		// 	video2a.play();
+	// const displayBouncedStream = stream => {
+	// 	const video1b = document.createElement('video');
+	// 	video1b.setAttribute('class', 'bouncedVideo');
+	// 	document.body.appendChild(video1b);
+	// 	video1b.srcObject = stream;
+	// 	video1b.play();
+	// }
 
-			// peer.call(call.peer, incomingStream, [bounced:true]);
+	// // myStreamorigin
+	// const video1a = document.createElement('video');
+	// video1a.setAttribute('class', 'myVideo');
+	// document.body.appendChild(video1a);
+	// video1a.srcObject = myStream;
+	// video1a.play();
+	// // myStreamB will be bounced on connection
 
-	};	
 
-// send messages
+// ▼▼ send messages ▼▼
 	
-	const sendMsgEvent = conn => {
+	const hookMsgEvent = conn => {
 		document.getElementById('send').addEventListener('click', ()=>{
 			const yourMessage = document.getElementById("yourMessage").value;
 			// console.log('o huj');
@@ -162,16 +162,3 @@ console.log('myStream L', myStream.id);
 	console.log(`user media error: ${err}`);
 });
 
-
-
-// how i would do it. 
-// B wait for new socket, 
-// B when socket connected, emit to other sockets
-// F1 when other socket connected, create peer
-// F1 send peer id over the socket to B
-// B relays peer id to new peer 
-// F2 takes the F1 peer id, iniiates its own peer,
-// F2 sends its own peer id to B
-// B relays F2's peer id to F1
-
-// but maybe thats already sorted.. 
