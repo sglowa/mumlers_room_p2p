@@ -49,10 +49,71 @@ const sanitizeInput = (input)=>{
 	return isSanitized;
 };
 
+const getUserMedia = ()=>{
+	return new Promise((resolve,reject)=>{
+
+		navigator.getUserMedia = ( navigator.getUserMedia ||
+		                       navigator.webkitGetUserMedia ||
+		                       navigator.mozGetUserMedia ||
+		                       navigator.msGetUserMedia);
+
+		navigator.getUserMedia({video:{
+			width:{ideal:480},
+			height:{ideal:360}
+		},audio:false},myStream=>{
+			resolve(myStream);
+		},err=>{
+			reject(new Error(err));
+		});
+	});
+};
+
+const createEmptyAudioTrack = () => {
+  const ctx = new AudioContext();
+  const oscillator = ctx.createOscillator();
+  const dst = oscillator.connect(ctx.createMediaStreamDestination());
+  oscillator.start();
+  const track = dst.stream.getAudioTracks()[0];
+  return Object.assign(track, { enabled: false });
+};
+
+const createEmptyVideoTrack = ({ width, height }) => {
+  const canvas = Object.assign(document.createElement('canvas'), { width, height });
+  canvas.getContext('2d').fillRect(0, 0, width, height);
+
+  const stream = canvas.captureStream();
+  const track = stream.getVideoTracks()[0];
+
+  return Object.assign(track, { enabled: false });
+};
+
+const makeEmptyStream = ({ width, height })=>{
+	const newAudioT = createEmptyAudioTrack();
+	const newVideoT = createEmptyVideoTrack({width:height});
+	return new MediaStream([newAudioT,newVideoT])	
+}
+
+const changeTracks=(peerConnection,track)=>{
+	
+	const senders = peerConnection.getSenders();
+	const sender = senders.find(s=>{
+		return s.track.kind == track.kind;
+	});
+	if(sender==undefined){
+		console.error(`${track.kind} track you want to replace does not exist`);
+		return;
+	} 
+	sender.replaceTrack(track);
+}
+
+
 // using es6 shorthand
 module.exports = {
 	httpGet,
 	httpPost,
 	validateInput,
-	sanitizeInput
+	sanitizeInput,
+	getUserMedia,
+	makeEmptyStream,
+	changeTracks
 };

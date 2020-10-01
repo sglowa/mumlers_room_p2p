@@ -60,41 +60,65 @@ class Room {
 		this.members = [];
 		this.addPeer(socket_id);
 		roomArr.push(this); // initing io room
+		console.debug(roomArr);		
 	};
 
-	hookDisconnect = (socket_rm)=>{
-		socket_rm = typeof socket_rm === 'string' ? io.of('/').connected[`${socket_rm}`] : socket_rm;
-		socket_rm.on('disconnecting', socket=>{
-			if(socket_rm.rooms[this.name]!===this.name){
+	hookDisconnect = (member_rm)=>{
+		// socket_rm = typeof socket_rm === 'string' ? io.of('/').connected[`${socket_rm}`] : socket_rm;
+		const socket = member_rm.socket;
+		socket.on('disconnecting', ()=>{
+			if(socket.rooms[this.name]!==this.name){
 				console.error(`socket does not belong to room ${this.name}`);	
 			}else{
-				this.removePeer(socket_rm);
-				console.debug(`${socket_rm} disconnected from ${this}`);
+				this.members = this.members.filter(member => member !== member_rm);				
+				console.debug(`${socket.id} disconnected from ${this.name}`);
+				if(this.members.length === 0 ) this.closeRoom();
 			};
 		});
 	};
 
+	hookPeerInit = (member)=>{
+		const socket = member.socket;
+		socket.on('peerInit',data=>{
+			member.peer = data.peer_id;			
+
+			const prevPartner_i = this.members.indexOf(member) -1;			
+			if(prevPartner_i<0){
+				console.debug('no partner, youre alone');
+				return;	
+			}else if(this.members.length-2!==prevPartner_i){
+				console.debug('something wrong');
+				return;
+			} // debugging
+			const prevPartner = this.members[prevPartner_i];
+			prevPartner.socket.emit('newPartner',{peer:member.peer}); //sweet, sends only to partner
+
+			const nextPartner = this.members[0]; 
+			socket.emit('newPartner',{peer:nextPartner.peer});
+		});
+
+		// send peerid to member n-1
+	}
+
 	addPeer = (socket_add)=>{
 		socket_add = typeof socket_add === 'string' ? io.of('/').connected[`${socket_add}`] : socket_add;
 		socket_add.join(this.name);
-		this.hookDisconnect(socket_add);
-		this.members.push(socket_add);
-		io.to(socket_add.id).emit('roomEntered',{name:this.name});
+		const member = {socket:socket_add,peer:null}
+		this.members.push(member);
+
+		this.hookPeerInit(member);
+		this.hookDisconnect(member);
+		
+		socket_add.emit('roomEntered',{name:this.name});
 		// 1. let socket know it entered the room, (via post res or socket).
 		// 2. client creates a peer, sends the socket emit (peer_id)
 		// 3. server broadcast peer_id to everone else in the room
 
 		// now, peering happens all on client side, remember
 	};
-	removePeer = (socket_rm)=>{
-		socket_rm = typeof socket_rm === 'string' ? io.of('/').connected[`${socket_rm}`] : socket_rm;
-		this.members = this.members.filter(socket => socket !== socket_rm);
-		// socket.io removes disconnected socket from rooms automatically 
-		// closePeerConnection
-		if(this.members.length === 0 ) this.closeRoom();
-	};
 	closeRoom = ()=>{
 		roomArr = roomArr.filter(room => room !== this); // removing the only ref so should be garbage collected.
+		console.debug(`room : ${this} has been closed; \n remaining rooms : ${roomArr}`);
 	};
 };
 
